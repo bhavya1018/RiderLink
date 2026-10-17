@@ -2,13 +2,24 @@ import { Button } from '../components/Button'
 import { Card, Badge } from '../components/Card'
 import { EmptyState } from '../components/EmptyState'
 import { Icon } from '../components/Icon'
+import type { Ride } from '../data/rides'
 
 type DashboardPageProps = {
+  rides: Ride[]
+  demoUser: string
   onCreateRide: () => void
   onJoinRide: () => void
 }
 
-export function DashboardPage({ onCreateRide, onJoinRide }: DashboardPageProps) {
+export function DashboardPage({ rides, demoUser, onCreateRide, onJoinRide }: DashboardPageProps) {
+  const today = new Date()
+  const offset = today.getTimezoneOffset() * 60_000
+  const localToday = new Date(today.getTime() - offset).toISOString().slice(0, 10)
+  const upcomingRides = rides.filter((ride) => ride.date >= localToday && ride.participants.some(
+    (participant) => participant.name.trim().toLowerCase() === demoUser.trim().toLowerCase(),
+  ))
+    .sort((first, second) => first.date.localeCompare(second.date))
+    .slice(0, 3)
   return (
     <div className="page-stack">
       <section className="welcome-row">
@@ -56,15 +67,26 @@ export function DashboardPage({ onCreateRide, onJoinRide }: DashboardPageProps) 
               <p className="eyebrow">ON THE HORIZON</p>
               <h2>Upcoming rides</h2>
             </div>
-            <Badge tone="accent">0 SCHEDULED</Badge>
+            <Badge tone="accent">{upcomingRides.length} UPCOMING</Badge>
           </div>
-          <EmptyState
-            icon="calendar"
-            title="Nothing on the calendar. Yet."
-            description="Your rides will show up here once you create or join one."
-            compact
-            action={<button type="button" className="text-action" onClick={onCreateRide}>Plan your first ride <Icon name="arrow-up-right" /></button>}
-          />
+          {upcomingRides.length === 0 ? (
+            <EmptyState
+              icon="calendar"
+              title="Nothing on the calendar. Yet."
+              description="Your rides will show up here once you create or join one."
+              compact
+              action={<button type="button" className="text-action" onClick={onCreateRide}>Plan your first ride <Icon name="arrow-up-right" /></button>}
+            />
+          ) : (
+            <ul className="dashboard-upcoming-list">
+              {upcomingRides.map((ride) => (
+                <li key={ride.id}>
+                  <span><strong>{ride.name}</strong><small>{ride.start} → {ride.destination}</small></span>
+                  <span className="dashboard-upcoming-list__date">{ride.date}<small>{ride.departureTime}</small></span>
+                </li>
+              ))}
+            </ul>
+          )}
         </Card>
 
         <Card className="dashboard-panel activity-panel">

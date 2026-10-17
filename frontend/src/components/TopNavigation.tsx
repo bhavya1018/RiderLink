@@ -1,7 +1,7 @@
 import { Button } from './Button'
 import { Icon } from './Icon'
 
-export type AppPage = 'dashboard' | 'rides' | 'profile' | 'create' | 'join'
+export type AppPage = 'dashboard' | 'rides' | 'profile' | 'create' | 'join' | 'details'
 
 type TopNavigationProps = {
   activePage: AppPage
