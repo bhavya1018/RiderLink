@@ -4,7 +4,7 @@ import com.riderlink.dto.CreateRideRequest;
 import com.riderlink.dto.JoinRideRequest;
 import com.riderlink.dto.RideResponse;
 import com.riderlink.service.RideService;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
